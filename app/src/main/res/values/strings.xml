@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">Tela_Inicial</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <string-array name="mapas">
+        <item>Visão: Satellite</item>
+        <item>Visão: Vetorial </item>
+    </string-array>
+
+    <string-array name="Velocidade">
+        <item>m/s</item>
+        <item>KM/H </item>
+    </string-array>
+
+    <string-array name="Orientação">
+        <item>Nenhuma</item>
+        <item>North UP (Alinhado ao Norte) </item>
+        <item> Course UP (Direção alinhada ao Topo)</item>
+
+    </string-array>
+
+    <string-array name="Tipo_de_Exercício">
+        <item>Caminhada</item>
+        <item>Corrida</item>
+        <item>Bicicleta</item>
+
+    </string-array>
+
+
+    <string-array name="Felipe">
+        <item>teste</item>
+        <item>teste </item>
+        <item> teste</item>
+
+    </string-array>
+
+    <string-array name="Alessandro">
+        <item>teste</item>
+        <item>teste</item>
+        <item>teste</item>
+
+    </string-array>
+
+    <string-array name="Leonam">
+        <item>Teste</item>
+        <item>teste</item>
+        <item>teste</item>
+
+    </string-array>
+
+    <string-array name="Versão">
+        <item>Versão: 1.10.2.1</item>
+    </string-array>
+
+    <string-array name="Sexo">
+        <item>Masculino</item>
+        <item>Feminino</item>
+    </string-array>
+
+    <string-array name="Email">
+        <item>Master_lol@gmail.com</item>
+    </string-array>
+    <string name="title_activity_gnss_view">GNSS_VIEW</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="tipo_exerc">Tipo Exercício</string>
+    <string name="nomePerfil">Nome</string>
+    <string name="sexo">Sexo</string>
+    <string name="idade">Idade</string>
+    <string name="peso">Peso</string>
+    <string name="altura">Altura</string>
+
+
+</resources>
