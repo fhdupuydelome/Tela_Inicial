@@ -69,8 +69,32 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
                 createAlertDialogPeso();
             }
         });
+        labelAltura.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createAlertDialogAltura();
+            }
+        });
 
 
+    }
+
+    private void createAlertDialogAltura() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Altura");
+
+        final View alturaInputLayout = getLayoutInflater().inflate(R.layout.altura_input_layout, null);
+
+        builder.setView(alturaInputLayout);
+        builder
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        EditText inpuAltura = alturaInputLayout.findViewById(R.id.edit_text_altura);
+                    }
+                });
+        AlertDialog pesoDialog = builder.create();
+        pesoDialog.show();
     }
 
     private void createAlertDialogPeso() {
