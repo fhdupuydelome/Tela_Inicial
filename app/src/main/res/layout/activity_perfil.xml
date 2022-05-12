@@ -15,7 +15,7 @@
         android:layout_marginTop="12dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="12dp"
-        android:text="Perfil"
+        android:text="@string/activity_label_perfil"
         android:textColor="@color/colorBlack"
         android:textSize="30sp"
         android:textStyle="bold" />
@@ -58,18 +58,6 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="34sp"
             android:textStyle="bold" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:hint="Digite o peso"
-                android:textSize="30dp" />
-        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/textViewAltura"

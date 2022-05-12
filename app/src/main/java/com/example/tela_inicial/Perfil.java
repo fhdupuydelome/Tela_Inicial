@@ -13,23 +13,26 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Perfil extends AppCompatActivity {
+public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private static final String SHARED_PREFERENCES = "shared";
     private static final String SEXO = "sexo";
     private static final String IDADE = "idade";
     private CardView getCardContat_us;
-   private Calendar calendar;
     private int ano, mes, dia;
     private String selectedLabel;
     private int selectedPosition;
@@ -38,6 +41,8 @@ public class Perfil extends AppCompatActivity {
     TextView labelIdade;
     TextView labelPeso;
     TextView labelAltura;
+    View btnSalvar;
+    EditText inputPeso;
     SharedPreferences sharedPreferences;
 
 
@@ -52,37 +57,33 @@ public class Perfil extends AppCompatActivity {
 
 
         labelSexo.setOnClickListener(v -> createAlertDialogSexo());
-        labelIdade.setOnClickListener(v -> {
-            createAlertDialogIdade().show();
+        labelIdade.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createAlertDialogIdade();
+            }
         });
-        labelPeso.setOnClickListener(view -> createAlertDialogoPeso());
+     /*   inputPeso.setText(sharedPreferences.getInt("peso", 0));
+        btnSalvar.setOnClickListener(view -> {
+            int pesoDigitado = Integer.parseInt(Objects.requireNonNull(inputPeso.getText()).toString());
+            saveSharedPreferences("peso", pesoDigitado);
+        });*/
 
 
     }
 
-    private void createAlertDialogoPeso() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Peso");
-        //builder.setView(R.id.input_peso);
-        builder.create();
-        builder.show();
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    @Override
+    public void onDateSet(DatePicker datePicker, int ano, int mes, int dia) {
+
+        Map<String, Integer> data = new HashMap<>();
+        data.put("ano", ano);
+        data.put("mes", mes);
+        data.put("dia", dia);
+        data.forEach(this::saveSharedPreferences
+        );
     }
-
-    private DatePickerDialog.OnDateSetListener dateSetListener =
-            new DatePickerDialog.OnDateSetListener() {
-
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void onDateSet(DatePicker datePicker, int ano, int mes, int dia) {
-
-                    Map<String, Integer> data = new HashMap<>();
-                    data.put("ano", ano);
-                    data.put("mes", mes);
-                    data.put("dia", dia);
-                    data.forEach((key, value) -> saveSharedPreferences(key, value)
-                    );
-                }
-            };
 
 
     private void initComponents() {
@@ -90,19 +91,21 @@ public class Perfil extends AppCompatActivity {
         labelIdade = findViewById(R.id.textIdade);
         labelPeso = findViewById(R.id.textViewPeso);
         labelAltura = findViewById(R.id.textViewAltura);
+        inputPeso = findViewById(R.id.input_peso);
+        btnSalvar = findViewById(R.id.btn_salvar);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private Dialog createAlertDialogIdade() {
-        calendar = Calendar.getInstance();
-        Date dataAtual  = calendar.getTime();
-        SimpleDateFormat anoAtualFormat = new SimpleDateFormat("yyyy");
-
-
-        ano = sharedPreferences.getInt("ano", calendar.get(Calendar.YEAR));
-        mes = sharedPreferences.getInt("mes", calendar.get(Calendar.MONTH));
-        dia = sharedPreferences.getInt("dia", calendar.get(Calendar.DAY_OF_MONTH));
-        return new DatePickerDialog(this, dateSetListener, ano, mes, dia);
+    private void createAlertDialogIdade() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        com.example.tela_inicial.DatePicker datePickerDialogFragment;
+        datePickerDialogFragment = new com.example.tela_inicial.DatePicker(
+                sharedPreferences.getInt("ano", calendar.get(Calendar.YEAR)),
+                sharedPreferences.getInt("mes", calendar.get(Calendar.MONTH)),
+                sharedPreferences.getInt("dia", calendar.get(Calendar.DAY_OF_MONTH))
+        );
+        datePickerDialogFragment.show(getSupportFragmentManager(), "DATE PICKER");
     }
 
     private void createAlertDialogSexo() {
@@ -139,6 +142,5 @@ public class Perfil extends AppCompatActivity {
         editor.putInt(configNome, selectedPosition);
         editor.apply();
     }
-
 
 }
