@@ -57,7 +57,8 @@
             android:textAlignment="viewStart"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="34sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="TextContrastCheck" />
 
         <TextView
             android:id="@+id/textViewAltura"
@@ -68,7 +69,8 @@
             android:textAlignment="viewStart"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="34sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="TextContrastCheck" />
 
     </LinearLayout>
 

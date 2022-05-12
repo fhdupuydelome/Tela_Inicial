@@ -90,6 +90,7 @@
     <string name="idade">Idade</string>
     <string name="peso">Peso</string>
     <string name="altura">Altura</string>
+    <string name="activity_label_perfil">Perfil</string>
 
 
 </resources>
