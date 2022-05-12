@@ -59,6 +59,18 @@
             android:textSize="34sp"
             android:textStyle="bold" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:hint="Digite o peso"
+                android:textSize="30dp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <TextView
             android:id="@+id/textViewAltura"
             android:layout_width="match_parent"
@@ -69,6 +81,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="34sp"
             android:textStyle="bold" />
+
     </LinearLayout>
 
 

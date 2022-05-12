@@ -23,7 +23,7 @@ public class config extends AppCompatActivity {
     private int selectedPosition;
     SharedPreferences sharedPreferences;
     CardView cardGlobo;
-    CardView cardOrientação;
+    CardView cardOrientacao;
     CardView CardVelocidade;
     CardView cardTipoExercicio;
 
@@ -37,7 +37,7 @@ public class config extends AppCompatActivity {
         CardVelocidade = findViewById(R.id.cardVelocidade);
         cardTipoExercicio = findViewById(R.id.cardTipoExercicio);
         cardGlobo = findViewById(R.id.cardGlobo);
-        cardOrientação = findViewById(R.id.cardOrientação);
+        cardOrientacao = findViewById(R.id.cardOrientação);
 
         cardGlobo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +54,7 @@ public class config extends AppCompatActivity {
             }
         });
 
-        cardOrientação.setOnClickListener(new View.OnClickListener() {
+        cardOrientacao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 createAlertDialogOrientacao();

@@ -17,7 +17,7 @@ public class Sobre extends AppCompatActivity {
     CardView cardAlessandro;
     CardView cardLeonam;
     CardView CardFelipe;
-    CardView cardVersão;
+    CardView cardVersao;
 
 
     @Override
@@ -26,7 +26,7 @@ public class Sobre extends AppCompatActivity {
         setContentView(R.layout.activity_sobre);
 
         CardFelipe = findViewById(R.id.cardFelipe);
-        cardVersão = findViewById(R.id.cardVersão);
+        cardVersao = findViewById(R.id.cardVersão);
         cardAlessandro = findViewById(R.id.cardAlessandro);
         cardLeonam = findViewById(R.id.cardLeonam);
 
@@ -56,7 +56,7 @@ public class Sobre extends AppCompatActivity {
 
         });
 
-        cardVersão.setOnClickListener(new View.OnClickListener() {
+        cardVersao.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder alerta = new AlertDialog.Builder(Sobre.this);

@@ -108,7 +108,7 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/cardPerfil"
             android:layout_width="wrap_content"
-            android:layout_height="187dp"
+            android:layout_height="wrap_content"
             android:layout_row="1"
             android:layout_rowWeight="1"
             android:layout_column="0"
