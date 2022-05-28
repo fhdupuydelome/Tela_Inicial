@@ -20,12 +20,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-    public class GNSS extends View implements View.OnClickListener {
+    public class EmBreve extends View implements View.OnClickListener {
         private GnssStatus newStatus;
         private int r;
         private int height, width;
 
-        public GNSS(Context context, @Nullable AttributeSet attrs) {
+        public EmBreve(Context context, @Nullable AttributeSet attrs) {
             super(context, attrs);
         }
 

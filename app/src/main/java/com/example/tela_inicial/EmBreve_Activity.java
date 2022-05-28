@@ -23,7 +23,7 @@ import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class GNSS_Activity extends AppCompatActivity implements LocationListener {
+public class EmBreve_Activity extends AppCompatActivity implements LocationListener {
 
     @Override
     public void onLocationChanged(@NonNull Location location) {

@@ -10,11 +10,10 @@ import android.view.View;
 public class MainActivity extends AppCompatActivity {
     private CardView getCardtela_inicial;
 
-    CardView cardMaps;
+    CardView cardAtividade;
     CardView cardAjustes;
     CardView cardPerfil;
     CardView cardSobre;
-    CardView cardGnss;
     CardView cardHistorico;
 
 
@@ -23,38 +22,38 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cardMaps = findViewById(R.id.cardMaps);
+        cardAtividade = findViewById(R.id.cardAtividade);
         cardAjustes = findViewById(R.id.cardAjustes);
-        cardSobre = findViewById(R.id.cardSobre);
+        cardSobre = findViewById(R.id.cardInfo);
         cardPerfil = findViewById(R.id.cardPerfil);
-        cardGnss = findViewById(R.id.cardGnss);
         cardHistorico = findViewById(R.id.cardHistorico);
 
         cardAjustes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent Intent = new Intent(getApplicationContext(),config.class);
+                Intent Intent = new Intent(getApplicationContext(), config.class);
                 startActivity(Intent);
             }
 
 
         });
+
         cardSobre.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 Intent Intent = new Intent(getApplicationContext(), Sobre.class);
                 startActivity(Intent);
-    }
+            }
 
-            });
+        });
 
-        cardMaps.setOnClickListener(new View.OnClickListener() {
+        cardAtividade.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent Intent = new Intent(getApplicationContext(),MapsActivity.class);
+                Intent Intent = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivity(Intent);
             }
 
@@ -69,20 +68,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
         cardHistorico.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent Intent = new Intent(getApplicationContext(),GNSS_Activity .class);
-                startActivity(Intent);
-            }
-
-        });
-        cardGnss.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                Intent Intent = new Intent(getApplicationContext(), GNSS.class);
+                Intent Intent = new Intent(getApplicationContext(), EmBreve_Activity.class);
                 startActivity(Intent);
             }
 
@@ -91,5 +82,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    }
+}
 

@@ -3,10 +3,8 @@ package com.example.tela_inicial;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -14,35 +12,27 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private static final String SHARED_PREFERENCES = "shared";
-    private static final String SEXO = "sexo";
+    private static final String GENERO = "genero";
     private static final String IDADE = "idade";
-    private CardView getCardContat_us;
-    private int ano, mes, dia;
     private String selectedLabel;
     private int selectedPosition;
-    private DatePicker datePicker;
-    TextView labelSexo;
-    TextView labelIdade;
-    TextView labelPeso;
-    TextView labelAltura;
-    View btnSalvar;
-    EditText inputPeso;
+    TextView textButtonGenero;
+    TextView textButtonNascimento;
+    TextView textButtonPeso;
+    TextView textButtonAltura;
+    TextView labelGenero, labelNascimento, labelPeso, labelAltura, labelIdade, labelImc;
     SharedPreferences sharedPreferences;
 
 
@@ -56,20 +46,20 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         initComponents();
 
 
-        labelSexo.setOnClickListener(v -> createAlertDialogSexo());
-        labelIdade.setOnClickListener(new View.OnClickListener() {
+        textButtonGenero.setOnClickListener(v -> createAlertDialogGenero());
+        textButtonNascimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAlertDialogIdade();
             }
         });
-        labelPeso.setOnClickListener(new View.OnClickListener() {
+        textButtonPeso.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAlertDialogPeso();
             }
         });
-        labelAltura.setOnClickListener(new View.OnClickListener() {
+        textButtonAltura.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAlertDialogAltura();
@@ -84,13 +74,20 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         builder.setTitle("Altura");
 
         final View alturaInputLayout = getLayoutInflater().inflate(R.layout.altura_input_layout, null);
+        NumberPicker inputAltura = (NumberPicker) alturaInputLayout.findViewById(R.id.edit_text_altura);
+
+        inputAltura.setMaxValue(3);
+        inputAltura.setMinValue(1);
+        inputAltura.setValue(1);
 
         builder.setView(alturaInputLayout);
         builder
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
-                        EditText inpuAltura = alturaInputLayout.findViewById(R.id.edit_text_altura);
+
+                        int alturaValue = inputAltura.getValue();
+                        saveSharedPreferences("altura", alturaValue);
                     }
                 });
         AlertDialog pesoDialog = builder.create();
@@ -109,6 +106,9 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
                         EditText inputPeso = pesoInputLayout.findViewById(R.id.edit_text_peso);
+
+                        int pesoValue = Integer.parseInt(inputPeso.getText().toString());
+                        saveSharedPreferences("peso", pesoValue);
                     }
                 });
         AlertDialog pesoDialog = builder.create();
@@ -125,16 +125,17 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         data.put("ano", ano);
         data.put("mes", mes);
         data.put("dia", dia);
-        data.forEach(this::saveSharedPreferences
+        data.forEach((configNome, selectedPosition1) -> saveSharedPreferences(configNome, selectedPosition1)
         );
     }
 
 
     private void initComponents() {
-        labelSexo = findViewById(R.id.textViewSexo);
-        labelIdade = findViewById(R.id.textIdade);
-        labelPeso = findViewById(R.id.textViewPeso);
-        labelAltura = findViewById(R.id.textViewAltura);
+        textButtonGenero = (TextView) findViewById(R.id.textViewGenero);
+        textButtonNascimento = (TextView) findViewById(R.id.textIdade);
+        textButtonPeso = (TextView) findViewById(R.id.textViewPeso);
+        textButtonAltura = (TextView) findViewById(R.id.textViewAltura);
+        labelGenero = (TextView) findViewById(R.id.generoOut);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -150,13 +151,13 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         datePickerDialogFragment.show(getSupportFragmentManager(), "Data de Nascimento");
     }
 
-    private void createAlertDialogSexo() {
+    private void createAlertDialogGenero() {
 
-        final String arr[] = getResources().getStringArray(R.array.Sexo);
+        final String arr[] = getResources().getStringArray(R.array.Genero);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        int currentSelectedValue = sharedPreferences.getInt(SEXO, -1);
-        builder.setTitle("Telefone");
-        builder.setSingleChoiceItems(R.array.Sexo, currentSelectedValue, new DialogInterface.OnClickListener() {
+        int currentSelectedValue = sharedPreferences.getInt(GENERO, -1);
+        builder.setTitle("Genero");
+        builder.setSingleChoiceItems(R.array.Genero, currentSelectedValue, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 selectedLabel = arr[which];
@@ -167,7 +168,8 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                saveSharedPreferences(SEXO, selectedPosition);
+                saveSharedPreferences(GENERO, selectedPosition);
+                labelGenero.setText(selectedLabel);
                 Toast.makeText(Perfil.this, selectedLabel, Toast.LENGTH_SHORT).show();
             }
         });

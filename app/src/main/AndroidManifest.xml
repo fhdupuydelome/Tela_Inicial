@@ -21,10 +21,10 @@
             android:name=".Perfil"
             android:exported="false" />
         <activity
-            android:name=".GNSS_Activity"
+            android:name=".EmBreve_Activity"
             android:exported="true" />
         <activity
-            android:name=".GNSS"
+            android:name=".EmBreve"
             android:exported="true" />
         <activity
             android:name=".Historico"

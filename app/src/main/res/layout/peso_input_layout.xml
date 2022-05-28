@@ -12,7 +12,8 @@
         android:id="@+id/edit_text_peso"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        tools:ignore="SpeakableTextPresentCheck" />
+        android:hint="@string/peso_input_hint"
+
+        android:inputType="numberDecimal" />
 
 </LinearLayout>

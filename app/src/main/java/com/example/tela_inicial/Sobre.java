@@ -14,10 +14,12 @@ public class Sobre extends AppCompatActivity {
     private CardView getCardCreditos;
     private String data;
 
-    CardView cardAlessandro;
+    CardView CardRonald;
     CardView cardLeonam;
-    CardView CardFelipe;
+    CardView CardFernando;
     CardView cardVersao;
+    CardView cardGabriel;
+    CardView cardLuiz;
 
 
     @Override
@@ -25,12 +27,13 @@ public class Sobre extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sobre);
 
-        CardFelipe = findViewById(R.id.cardFelipe);
+        CardFernando = findViewById(R.id.cardFelipe);
         cardVersao = findViewById(R.id.cardVersão);
-        cardAlessandro = findViewById(R.id.cardAlessandro);
+        CardRonald = findViewById(R.id.cardRonald);
         cardLeonam = findViewById(R.id.cardLeonam);
+        cardGabriel = findViewById(R.id.cardNovo);
 
-        CardFelipe.setOnClickListener(new View.OnClickListener() {
+        CardFernando.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                AlertDialog.Builder alerta = new AlertDialog.Builder(Sobre.this);
@@ -109,7 +112,7 @@ public class Sobre extends AppCompatActivity {
             }
         });
 
-        cardAlessandro.setOnClickListener(new View.OnClickListener() {
+        CardRonald.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {AlertDialog.Builder alerta = new AlertDialog.Builder(Sobre.this);
                 alerta.setTitle("Sobre Alessandro");
@@ -134,5 +137,29 @@ public class Sobre extends AppCompatActivity {
             }
         });
 
+        cardGabriel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {AlertDialog.Builder alerta = new AlertDialog.Builder(Sobre.this);
+                alerta.setTitle("Sobre Novo");
+                alerta
+                        .setMessage("Um cara normal, Estuda na unifacs e que ajuda o Dev desse APP")
+                        .setCancelable(false)
+                        .setNegativeButton("cancelar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "Cancelado", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getApplicationContext(), "Ok", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                AlertDialog alertDialog = alerta.create();
+                alertDialog.show();
+
+            }
+        });
     }
 }

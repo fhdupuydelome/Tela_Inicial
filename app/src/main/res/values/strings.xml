@@ -67,7 +67,7 @@
         <item>Versão: 1.10.2.1</item>
     </string-array>
 
-    <string-array name="Sexo">
+    <string-array name="Genero">
         <item>Masculino</item>
         <item>Feminino</item>
     </string-array>
@@ -86,11 +86,18 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="tipo_exerc">Tipo Exercício</string>
     <string name="nomePerfil">Nome</string>
-    <string name="sexo">Sexo</string>
+    <string name="genero">Genero</string>
     <string name="idade">Idade</string>
     <string name="peso">Peso</string>
     <string name="altura">Altura</string>
     <string name="activity_label_perfil">Perfil</string>
+    <string name="altura_input_hint">Digite sua altura em cm</string>
+    <string name="peso_input_hint">Digite seu peso em Kg</string>
+    <string name="label_ajustes">Ajustes</string>
+    <string name="info">Sobre</string>
+    <string name="perfil">Perfil</string>
+    <string name="historico">Historico de Atividades</string>
+    <string name="atividade">Registrar Atividade</string>
 
 
 </resources>
