@@ -98,6 +98,7 @@
     <string name="perfil">Perfil</string>
     <string name="historico">Historico de Atividades</string>
     <string name="atividade">Registrar Atividade</string>
+    <string name="title_activity_historico">HistoricoActivity</string>
 
 
 </resources>

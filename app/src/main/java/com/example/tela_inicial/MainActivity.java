@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent Intent = new Intent(getApplicationContext(), EmBreve_Activity.class);
+                Intent Intent = new Intent(getApplicationContext(), HistoricoActivity.class);
                 startActivity(Intent);
             }
 

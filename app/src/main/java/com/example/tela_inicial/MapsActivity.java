@@ -1,21 +1,17 @@
 package com.example.tela_inicial;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
-import android.content.ClipData;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.view.Menu;
-import android.view.View;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -27,9 +23,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.UiSettings;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -37,12 +30,9 @@ import com.example.tela_inicial.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.karumi.dexter.Dexter;
-import com.karumi.dexter.PermissionToken;
-import com.karumi.dexter.listener.PermissionDeniedResponse;
-import com.karumi.dexter.listener.PermissionGrantedResponse;
-import com.karumi.dexter.listener.PermissionRequest;
-import com.karumi.dexter.listener.single.PermissionListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int REQUEST_LAST_LOCATION = 1;
@@ -57,12 +47,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationCallback mLocationCallback;
     private Location currentPosition, lastPosition;
     private boolean firstFix = true;
+
     private double distanciaAcumulada;
 
     private Marker userMarker;
     private Polyline rastro;
 
     private LatLng currentLocationLatLong;
+
+    SQLiteDatabase db;
+    ArrayList<LatLng> trajetoria = new ArrayList<>();
 
     private void centralizaMapa() {
         if (ActivityCompat.checkSelfPermission(
@@ -100,11 +94,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onLocationResult(@NonNull LocationResult locationResult) {
                     super.onLocationResult(locationResult);
+                    inserePosicaoNaTabela(locationResult.getLastLocation());
                     atualizaPosicaoNoMapa(locationResult.getLastLocation());
 
                 }
             };
-
             mFusedLocationProviderClient.requestLocationUpdates(mLocationRequest, mLocationCallback, null);
 
         } else {
@@ -116,34 +110,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private void inserePosicaoNaTabela(Location location) {
+        db.beginTransaction();
+        try {
+            db.execSQL("insert into coordenadas (latitude,longitude) values ("
+                    + location.getLatitude() + "," + location.getLongitude() + ");");
+            db.setTransactionSuccessful(); //persista as mudanças
+        } catch (SQLiteException e) {
+            System.out.println(e.getMessage());
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private ArrayList<LatLng> atualizaTrajetoria() {
+
+        Cursor cursor = db.rawQuery("select latitude,longitude from coordenadas", null);
+        int latitudeCol = cursor.getColumnIndex("latitude");
+        int longitudeCol = cursor.getColumnIndex("longitude");
+        while (cursor.moveToNext()) {
+            trajetoria.add(new LatLng(cursor.getDouble(latitudeCol), cursor.getDouble(longitudeCol)));
+        }
+        return trajetoria;
+    }
+
     private void atualizaPosicaoNoMapa(@NonNull Location location) {
         LatLng currentLatLng, lastLatLng;
         if (firstFix) {
             firstFix = false;
             currentPosition = lastPosition = location;
-            lastLatLng = new LatLng(lastPosition.getLatitude(), lastPosition.getLongitude());
             currentLatLng = new LatLng(currentPosition.getLatitude(), currentPosition.getLongitude());
             distanciaAcumulada = 0;
 
         } else {
-            lastLatLng = new LatLng(lastPosition.getLatitude(), lastPosition.getLongitude());
             lastPosition = currentPosition;
             currentPosition = location;
             currentLatLng = new LatLng(currentPosition.getLatitude(), currentPosition.getLongitude());
             distanciaAcumulada += currentPosition.distanceTo(lastPosition);
         }
+
         if (mMap != null) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16.0f));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16.0f));
             if (userMarker == null) {
                 userMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng));
             } else {
-                mMap.addPolyline(new PolylineOptions()
-                        .add(lastLatLng ,currentLatLng)
-                        .visible(true)
-                );
                 userMarker.setPosition(currentLatLng);
                 mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng));
             }
+        } else {
+            System.out.println("Teste");
+            System.out.println("Teste: " + location.getLatitude() + ", " + location.getLongitude() );
         }
     }
 
@@ -154,19 +170,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        iniciarColetaLocalizacao();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.map_historico);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
-        iniciarColetaLocalizacao();
+        iniciaBancodeDados();
+
+
+    }
+
+    private void iniciaBancodeDados() {
+        String dbPath = "/data/data/com.example.tela_inicial/historico.db";
+        try {
+            db = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.CREATE_IF_NECESSARY);
+            db.execSQL("create table if not exists coordenadas (latitude numeric,longitude numeric)");
+            db.execSQL("delete from coordenadas");
+        } catch (SQLiteException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mFusedLocationProviderClient != null) {
+            mFusedLocationProviderClient.removeLocationUpdates(mLocationCallback);
+        }
+        db.close();
 
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        //centralizaMapa();
     }
 
     @Override
