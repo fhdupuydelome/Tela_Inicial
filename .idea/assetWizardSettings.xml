@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/timer/baseline_timer_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/save/baseline_save_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -34,7 +34,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="4a148b" />
-                            <entry key="outputName" value="ic_historico" />
+                            <entry key="outputName" value="ic_save_activity" />
                             <entry key="sourceFile" value="C:\Users\fernando.dupuy\AndroidStudioProjects\Tela_Inicial" />
                           </map>
                         </option>

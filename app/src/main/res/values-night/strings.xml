@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lbl_start">Iniciar Atividade</string>
+    <string name="lbl_save">Salvar Atividade</string>
+</resources>

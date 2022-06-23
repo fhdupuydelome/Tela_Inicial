@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
@@ -27,6 +28,8 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
     private static final String GENERO = "genero";
     private static final String IDADE = "idade";
     private String selectedLabel;
+    private Map<String, Object[]> userProfile = new HashMap<>();
+    private String[] configGenerno, configVelocidade, configTipoMapa, configOrientacao, configTipoExercicio;
     private int selectedPosition;
     TextView textButtonGenero;
     TextView textButtonNascimento;
@@ -42,6 +45,8 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_perfil);
         sharedPreferences = getSharedPreferences(SHARED_PREFERENCES, MODE_PRIVATE);
+
+        loadUserProfileInfo();
 
         initComponents();
 
@@ -69,6 +74,10 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
 
     }
 
+    private void loadUserProfileInfo() {
+        userProfile.put(GENERO, getResources().getStringArray(R.array.Genero));
+    }
+
     private void createAlertDialogAltura() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Altura");
@@ -76,9 +85,9 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         final View alturaInputLayout = getLayoutInflater().inflate(R.layout.altura_input_layout, null);
         NumberPicker inputAltura = (NumberPicker) alturaInputLayout.findViewById(R.id.edit_text_altura);
 
-        inputAltura.setMaxValue(3);
-        inputAltura.setMinValue(1);
-        inputAltura.setValue(1);
+        inputAltura.setMaxValue(250);
+        inputAltura.setMinValue(50);
+        inputAltura.setValue(150);
 
         builder.setView(alturaInputLayout);
         builder
@@ -90,8 +99,8 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
                         saveSharedPreferences("altura", alturaValue);
                     }
                 });
-        AlertDialog pesoDialog = builder.create();
-        pesoDialog.show();
+        AlertDialog alturaDialog = builder.create();
+        alturaDialog.show();
     }
 
     private void createAlertDialogPeso() {
@@ -136,6 +145,7 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
         textButtonPeso = (TextView) findViewById(R.id.textViewPeso);
         textButtonAltura = (TextView) findViewById(R.id.textViewAltura);
         labelGenero = (TextView) findViewById(R.id.generoOut);
+        labelGenero.setText((String) Objects.requireNonNull(userProfile.get(GENERO))[sharedPreferences.getInt(GENERO, 0)]);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -153,7 +163,7 @@ public class Perfil extends AppCompatActivity implements DatePickerDialog.OnDate
 
     private void createAlertDialogGenero() {
 
-        final String arr[] = getResources().getStringArray(R.array.Genero);
+        final String[] arr = getResources().getStringArray(R.array.Genero);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int currentSelectedValue = sharedPreferences.getInt(GENERO, -1);
         builder.setTitle("Genero");

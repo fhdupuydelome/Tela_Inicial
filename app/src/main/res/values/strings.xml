@@ -27,7 +27,7 @@
         <item>KM/H </item>
     </string-array>
 
-    <string-array name="Orientação">
+    <string-array name="tipo_orientacao">
         <item>Nenhuma</item>
         <item>North UP (Alinhado ao Norte) </item>
         <item> Course UP (Direção alinhada ao Topo)</item>
@@ -99,6 +99,10 @@
     <string name="historico">Historico de Atividades</string>
     <string name="atividade">Registrar Atividade</string>
     <string name="title_activity_historico">HistoricoActivity</string>
+    <string name="labelAlturaUnit">cm</string>
+    <string name="lbl_start">Iniciar Atividade</string>
+    <string name="lbl_save">Salvar Atividade</string>
+    <string name="speedPlaceholder">0.00</string>
 
 
 </resources>

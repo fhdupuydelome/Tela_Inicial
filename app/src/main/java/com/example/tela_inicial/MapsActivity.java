@@ -1,17 +1,22 @@
 package com.example.tela_inicial;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.View;
+import android.widget.Chronometer;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -23,16 +28,19 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.tela_inicial.databinding.ActivityMapsBinding;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final int REQUEST_LAST_LOCATION = 1;
@@ -46,7 +54,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest mLocationRequest;
     private LocationCallback mLocationCallback;
     private Location currentPosition, lastPosition;
+    CardView btnIniciar, btnSalvar;
+    TextView speedDisplay, timeDisplay;
+
+    Chronometer cron;
+    private ArrayList<Float> velocidadesParciais = new ArrayList<>();
+
+    private Boolean registrarAtividade = false;
     private boolean firstFix = true;
+    private Map<String, Integer> appConfig = new HashMap<>();
+    SharedPreferences sharedPreferences;
 
     private double distanciaAcumulada;
 
@@ -94,7 +111,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 @Override
                 public void onLocationResult(@NonNull LocationResult locationResult) {
                     super.onLocationResult(locationResult);
-                    inserePosicaoNaTabela(locationResult.getLastLocation());
+                    if (registrarAtividade) {
+
+                        registrarAtividade(locationResult.getLastLocation());
+                    }
                     atualizaPosicaoNoMapa(locationResult.getLastLocation());
 
                 }
@@ -110,7 +130,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void inserePosicaoNaTabela(Location location) {
+    private void registrarAtividade(Location location) {
+
+        if (firstFix) {
+            firstFix = false;
+            currentPosition = lastPosition = location;
+            distanciaAcumulada = 0;
+
+        } else {
+            lastPosition = currentPosition;
+            currentPosition = location;
+            distanciaAcumulada += currentPosition.distanceTo(lastPosition);
+        }
+        if (location.hasSpeed()) {
+
+            float velocidadMs = location.getSpeed();
+            velocidadesParciais.add(velocidadMs);
+            BigDecimal bd = new BigDecimal(velocidadMs).setScale(2, RoundingMode.HALF_EVEN);
+
+            switch (appConfig.get("velocidade")) {
+                case 0:
+                    speedDisplay.setText(String.valueOf(bd) + " m/s");
+                    break;
+                case 1:
+                    speedDisplay.setText(String.valueOf(bd.divide(
+                            BigDecimal.valueOf(3.6), 2, RoundingMode.HALF_UP)) + " Km/H");
+                    break;
+            }
+        }
+
+
+        inserePosicaoNaTabela(location);
+    }
+
+    private void inserePosicaoNaTabela(@NonNull Location location) {
+        System.out.println("Registrando atividade");
         db.beginTransaction();
         try {
             db.execSQL("insert into coordenadas (latitude,longitude) values ("
@@ -123,62 +177,151 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private ArrayList<LatLng> atualizaTrajetoria() {
-
-        Cursor cursor = db.rawQuery("select latitude,longitude from coordenadas", null);
-        int latitudeCol = cursor.getColumnIndex("latitude");
-        int longitudeCol = cursor.getColumnIndex("longitude");
-        while (cursor.moveToNext()) {
-            trajetoria.add(new LatLng(cursor.getDouble(latitudeCol), cursor.getDouble(longitudeCol)));
-        }
-        return trajetoria;
-    }
-
     private void atualizaPosicaoNoMapa(@NonNull Location location) {
-        LatLng currentLatLng, lastLatLng;
-        if (firstFix) {
-            firstFix = false;
-            currentPosition = lastPosition = location;
-            currentLatLng = new LatLng(currentPosition.getLatitude(), currentPosition.getLongitude());
-            distanciaAcumulada = 0;
-
-        } else {
-            lastPosition = currentPosition;
-            currentPosition = location;
-            currentLatLng = new LatLng(currentPosition.getLatitude(), currentPosition.getLongitude());
-            distanciaAcumulada += currentPosition.distanceTo(lastPosition);
-        }
-
+        LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         if (mMap != null) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 16.0f));
             if (userMarker == null) {
                 userMarker = mMap.addMarker(new MarkerOptions().position(currentLatLng));
             } else {
                 userMarker.setPosition(currentLatLng);
-                mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+
+                switch (appConfig.get("tipo_orientacao")) {
+                    case 0:
+                        mMap.getUiSettings().setRotateGesturesEnabled(true);
+                        mMap.getUiSettings().setScrollGesturesEnabled(true);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+                        break;
+                    case 1:
+                        mMap.getUiSettings().setRotateGesturesEnabled(false);
+                        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+                        break;
+                    case 2:
+                        mMap.getUiSettings().setRotateGesturesEnabled(false);
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                .target(currentLatLng)
+                                .bearing(location.getBearing())
+                                .zoom(16.0f)
+                                .build()));
+                        break;
+                }
             }
-        } else {
-            System.out.println("Teste");
-            System.out.println("Teste: " + location.getLatitude() + ", " + location.getLongitude() );
         }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences = getSharedPreferences("shared", MODE_PRIVATE);
+
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        iniciarColetaLocalizacao();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map_historico);
+                .findFragmentById(R.id.map_activity);
         assert mapFragment != null;
         mapFragment.getMapAsync(this);
 
+
+        cron = (Chronometer) findViewById(R.id.cronometro);
+
+        btnIniciar = findViewById(R.id.btnStart);
+        btnIniciar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                registrarAtividade = !registrarAtividade;
+                if (registrarAtividade) {
+                    iniciarCronometro();
+                }
+            }
+        });
+        btnSalvar = findViewById(R.id.btnSave);
+        btnSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                armazenarInfoAtividade();
+            }
+        });
+
+        speedDisplay = findViewById(R.id.textView4);
+
+
+        loadAppConfig();
         iniciaBancodeDados();
+        iniciarColetaLocalizacao();
 
 
+    }
+
+    private void armazenarInfoAtividade() {
+        float velocidadeMedia = obterVelocidadeMedia();
+       double caloriaTotal = calcularGastoCalorico(velocidadeMedia);
+
+
+    }
+
+    private double calcularGastoCalorico(float velocidade) {
+        float peso = sharedPreferences.getFloat("peso", 0.0f);
+
+        double fatorCaloria = 0;
+        int tipoExercicio = sharedPreferences.getInt("tipo_exercicio", 0);
+
+        switch (tipoExercicio){
+            case 0:
+                fatorCaloria = 0.0140;
+                break;
+            case 1:
+                fatorCaloria = 0.175;
+                break;
+            case 2:
+                fatorCaloria = 0.0199;
+                break;
+        }
+        double caloria = (peso * velocidade) * fatorCaloria;
+        double caloriaTota = 0;
+        String[] tempoTotal = obterTempoTotal();
+        String min, sec;
+        min = tempoTotal[1];
+        sec = tempoTotal[0];
+
+        if(!"00".equals(min)){
+            caloriaTota = caloria * Double.parseDouble(min);
+        } else if(!"00".equals(sec)){
+            caloriaTota += caloria * (Double.parseDouble(sec) / 60);
+        }
+        return  caloriaTota;
+    }
+
+    private String[] obterTempoTotal() {
+        String[] minSec = cron.getText().toString().split(":");
+        String min = minSec[0];
+        String sec = minSec[1];
+        return  minSec;
+    }
+
+    private float obterVelocidadeMedia() {
+        float somatorioVelocidades = 0, total = 0, media = 0;
+        for (int i = 0; i < velocidadesParciais.size(); i++){
+            somatorioVelocidades += velocidadesParciais.get(i);
+            total++;
+        }
+        if (total <=  0){
+            return 0;
+        } 
+        return media = somatorioVelocidades/total;
+    }
+
+    private void iniciarCronometro() {
+        cron.setBase(SystemClock.elapsedRealtime());
+        cron.start();
+    }
+
+    private void loadAppConfig() {
+        appConfig.put("tipo_orientacao", sharedPreferences.getInt("orientacao", 0));
+        appConfig.put("velocidade", sharedPreferences.getInt("velocidade", 0));
+        appConfig.put("tipo_exercicio", sharedPreferences.getInt("tipo_exercicio", 0));
+        appConfig.put("opcao_mapa", sharedPreferences.getInt("opcaoMapa", 0));
     }
 
     private void iniciaBancodeDados() {
@@ -203,8 +346,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                int tipoMapa = sharedPreferences.getInt("opcaoMapa", 0);
+
+                switch (tipoMapa){
+                    case 0:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+                        break;
+                    case 1:
+                        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                        break;
+                }
+            }
+        });
     }
 
     @Override

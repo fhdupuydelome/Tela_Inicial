@@ -99,11 +99,11 @@ public class config extends AppCompatActivity {
 
     private void createAlertDialogOrientacao() {
 
-        final String arr[] = getResources().getStringArray(R.array.Orientação);
+        final String[] arr = getResources().getStringArray(R.array.tipo_orientacao);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int currentSelectedValue = sharedPreferences.getInt(ORIENTACAO, -1);
-        builder.setTitle("Orientação");
-        builder.setSingleChoiceItems(R.array.Orientação, currentSelectedValue, new DialogInterface.OnClickListener() {
+        builder.setTitle("tipo_orientacao");
+        builder.setSingleChoiceItems(R.array.tipo_orientacao, currentSelectedValue, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 selectedLabel = arr[which];
@@ -134,7 +134,7 @@ public class config extends AppCompatActivity {
 
     private void createAlertDialogVelocidade() {
 
-        final String arr[] = getResources().getStringArray(R.array.Velocidade);
+        final String[] arr = getResources().getStringArray(R.array.Velocidade);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int currentSelectedValue = sharedPreferences.getInt(VELOCIDADE, -1);
         builder.setTitle("Velocidade");
@@ -162,7 +162,7 @@ public class config extends AppCompatActivity {
 
     private void createAlertDialogTipoMapa() {
 
-        final String arr[] = getResources().getStringArray(R.array.mapas);
+        final String[] arr = getResources().getStringArray(R.array.mapas);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         int currentSelectedValue = sharedPreferences.getInt(OPCAO_MAPA, -1);
         builder.setTitle("Opções de Mapas");
